@@ -1,0 +1,49 @@
+### Health Check
+GET http://localhost:8080/auth/check
+Accept: application/json
+
+###
+
+### Register a new user
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "testuser@example.com",
+  "password": "securepassword123"
+}
+
+###
+
+### Register with an invalid email (to test validation)
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "name": "Invalid User",
+  "email": "in",
+  "password": "password"
+}
+
+###
+
+### Login with correct credentials
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "securepassword123"
+}
+
+###
+
+### Login with incorrect password
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "wrongpassword"
+}
