@@ -1,5 +1,7 @@
 package com.lms.backend.entity;
 
+import com.lms.backend.enums.AccountStatus;
+import com.lms.backend.enums.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,4 +32,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private AccountStatus status;
 }

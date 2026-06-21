@@ -1,4 +1,4 @@
-package com.lms.backend.entity;
+package com.lms.backend.enums;
 
 public enum Role {
     USER,

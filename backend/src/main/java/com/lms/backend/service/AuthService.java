@@ -11,19 +11,23 @@ import org.springframework.stereotype.Service;
 
 import com.lms.backend.dto.AuthenticationDto;
 import com.lms.backend.dto.ResponseDto;
-import com.lms.backend.entity.Role;
+import com.lms.backend.enums.AccountStatus;
+import com.lms.backend.enums.Role;
 import com.lms.backend.entity.User;
 import com.lms.backend.repository.AuthenticationRepo;
+import com.lms.backend.util.JwtUtil;
 
 @Service
 public class AuthService {
 
     private final AuthenticationRepo authenticationRepo;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public AuthService(AuthenticationRepo authenticationRepo) {
+    public AuthService(AuthenticationRepo authenticationRepo, JwtUtil jwtUtil) {
         this.authenticationRepo = authenticationRepo;
         this.passwordEncoder = new BCryptPasswordEncoder();
+        this.jwtUtil = jwtUtil;
     }
 
     public ResponseEntity<ResponseDto> login(AuthenticationDto loginRequest) {
@@ -37,7 +41,13 @@ public class AuthService {
             User user = userOpt.get();
 
             if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                return okResponse("Login successful");
+                if (user.getStatus() != AccountStatus.APPROVED) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                            .body(new ResponseDto("Account pending admin approval", false));
+                }
+                
+                String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+                return ResponseEntity.ok(new ResponseDto("Login successful", true, token));
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -54,10 +64,12 @@ public class AuthService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        
+
         if (user.getRole() == null) {
-            user.setRole(Role.USER); // Default to USER if no role is provided
+            user.setRole(Role.USER);
         }
+
+        user.setStatus(AccountStatus.PENDING);
 
         authenticationRepo.save(user);
         return okResponse("User registered successfully");
