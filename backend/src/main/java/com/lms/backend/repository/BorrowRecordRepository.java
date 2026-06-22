@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface BorrowRecordRepository extends JpaRepository<BorrowRecord, Integer> {
     List<BorrowRecord> findByDueDateBeforeAndIsReturnedFalse(LocalDate date);
     Optional<BorrowRecord> findByUserIdAndBookIdAndIsReturnedFalse(int userId, int bookId);
+    List<BorrowRecord> findByUserEmail(String email);
+    Optional<BorrowRecord> findByUserEmailAndBookIdAndIsReturnedFalse(String email, int bookId);
 }

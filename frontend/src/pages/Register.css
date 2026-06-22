@@ -1,0 +1,6 @@
+@import './Login.css';
+
+/* Any specific register styles can go here */
+.register-btn {
+  margin-top: 0.5rem;
+}

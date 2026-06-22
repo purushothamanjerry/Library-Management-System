@@ -1,11 +1,10 @@
 package com.lms.backend.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import com.lms.backend.entity.User;
 import com.lms.backend.service.AdminService;
-import java.util.*;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -17,13 +16,23 @@ public class AdminController {
         this.adminService = adminService;
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+        return adminService.getAllUsers();
+    }
+
     @GetMapping("/newRequest")
     public ResponseEntity<List<String>> getNewRequests() {
         return adminService.getNewRequests();
     }
 
-    @org.springframework.web.bind.annotation.PostMapping("/approveRequest")
-    public ResponseEntity<String> approveRequest(@org.springframework.web.bind.annotation.RequestParam String email) {
+    @PostMapping("/approveRequest")
+    public ResponseEntity<String> approveRequest(@RequestParam String email) {
         return adminService.approveRequest(email);
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable int id) {
+        return adminService.deleteUser(id);
     }
 }

@@ -39,6 +39,20 @@ public class BorrowingController {
         return borrowingService.extendDueDate(recordId, extraDays);
     }
 
+    @PostMapping("/my-borrow/{bookId}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<ResponseDto> borrowBookForSelf(@PathVariable int bookId) {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return borrowingService.borrowBookByEmail(email, bookId);
+    }
+
+    @GetMapping("/my-books")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<List<BorrowRecord>> getMyBooks() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(borrowingService.getUserBooks(email));
+    }
+
     @GetMapping("/overdue")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<BorrowRecord>> getOverdueBooks() {

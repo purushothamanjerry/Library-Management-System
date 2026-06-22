@@ -104,6 +104,47 @@ public class BorrowingService {
         return ResponseEntity.ok(new ResponseDto("Due date extended successfully by " + extraDays + " days", true));
     }
 
+    public ResponseEntity<ResponseDto> borrowBookByEmail(String email, int bookId) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        Optional<Book> bookOpt = bookRepository.findById(bookId);
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(404).body(new ResponseDto("User not found", false));
+        }
+        if (bookOpt.isEmpty()) {
+            return ResponseEntity.status(404).body(new ResponseDto("Book not found", false));
+        }
+
+        Book book = bookOpt.get();
+        if (book.getAvailableCopies() <= 0) {
+            return ResponseEntity.badRequest().body(new ResponseDto("No available copies for this book", false));
+        }
+
+        Optional<BorrowRecord> activeBorrow = borrowRecordRepository.findByUserEmailAndBookIdAndIsReturnedFalse(email, bookId);
+        if (activeBorrow.isPresent()) {
+            return ResponseEntity.badRequest().body(new ResponseDto("You have already borrowed this book and not returned it", false));
+        }
+
+        book.setAvailableCopies(book.getAvailableCopies() - 1);
+        bookRepository.save(book);
+
+        BorrowRecord record = BorrowRecord.builder()
+                .user(userOpt.get())
+                .book(book)
+                .borrowDate(LocalDate.now())
+                .dueDate(LocalDate.now().plusDays(15))
+                .isReturned(false)
+                .build();
+
+        borrowRecordRepository.save(record);
+
+        return ResponseEntity.ok(new ResponseDto("Book borrowed successfully", true));
+    }
+
+    public List<BorrowRecord> getUserBooks(String email) {
+        return borrowRecordRepository.findByUserEmail(email);
+    }
+
     public List<BorrowRecord> getOverdueBooks() {
         return borrowRecordRepository.findByDueDateBeforeAndIsReturnedFalse(LocalDate.now());
     }

@@ -1,6 +1,7 @@
 package com.lms.backend.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,13 @@ public class AdminService {
         this.authenticationRepo = authenticationRepo;
     }
 
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = authenticationRepo.findAll();
+        // Clear passwords before sending to frontend
+        users.forEach(u -> u.setPassword(null));
+        return ResponseEntity.ok(users);
+    }
+
     public ResponseEntity<List<String>> getNewRequests() {
         List<User> newRequests = authenticationRepo.findByStatus(AccountStatus.PENDING);
         List<String> emails = newRequests.stream()
@@ -27,7 +35,7 @@ public class AdminService {
     }
 
     public ResponseEntity<String> approveRequest(String email) {
-        java.util.Optional<User> userOptional = authenticationRepo.findByEmail(email);
+        Optional<User> userOptional = authenticationRepo.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (user.getStatus() == AccountStatus.PENDING) {
@@ -41,4 +49,12 @@ public class AdminService {
         return ResponseEntity.badRequest().body("User not found.");
     }
 
-}
+    public ResponseEntity<String> deleteUser(int id) {
+        Optional<User> userOptional = authenticationRepo.findById(id);
+        if (userOptional.isPresent()) {
+            authenticationRepo.deleteById(id);
+            return ResponseEntity.ok("User deleted successfully.");
+        }
+        return ResponseEntity.badRequest().body("User not found.");
+    }
+}

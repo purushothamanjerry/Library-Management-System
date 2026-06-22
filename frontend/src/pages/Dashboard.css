@@ -1,0 +1,74 @@
+.dashboard-page {
+  max-width: 1000px;
+}
+
+.welcome-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.12), rgba(74, 0, 224, 0.08));
+}
+
+.welcome-text h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.action-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.action-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(138, 43, 226, 0.3);
+  box-shadow: 0 8px 30px rgba(138, 43, 226, 0.15);
+}
+
+.action-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.action-info {
+  flex: 1;
+}
+
+.action-info h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+
+.action-info p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.action-arrow {
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.action-card:hover .action-arrow {
+  transform: translateX(4px);
+  color: var(--accent-primary);
+}
